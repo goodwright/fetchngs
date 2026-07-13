@@ -102,10 +102,10 @@ workflow PIPELINE_INITIALISATION {
         error('Ids provided via --input not recognised please make sure they are either SRA / ENA / GEO / DDBJ ids!')
     }
 
-    // Read in ids from --input file
+    // Read in ids from the "accession" column of the --input file
     channel.from(ch_input)
-        .splitCsv(header: false, sep: '', strip: true)
-        .map { row -> row[0] }
+        .splitCsv(header: true, strip: true)
+        .map { row -> row.accession }
         .unique()
         .set { ch_ids }
 
@@ -174,10 +174,20 @@ def isSraId(input) {
     def total_ids = 0
     def no_match_ids = []
     def pattern = /^(((SR|ER|DR)[APRSX])|(SAM(N|EA|D))|(PRJ(NA|EB|DB))|(GS[EM]))(\d+)$/
-    input.eachLine { line ->
+    def accession_index = null
+    input.eachLine { line, number ->
+        def cells = line.split(',', -1).collect { it.trim() }
+        if (number == 1) {
+            accession_index = cells.indexOf('accession')
+            if (accession_index == -1) {
+                error("--input CSV must have an 'accession' column")
+            }
+            return
+        }
         total_ids += 1
-        if (!(line =~ pattern)) {
-            no_match_ids << line
+        def accession = cells[accession_index]
+        if (!(accession =~ pattern)) {
+            no_match_ids << accession
         }
     }
 
