@@ -2,20 +2,59 @@
     "inputs": [
         {
             "name": "Accessions & metadata",
-            "description": "A CSV with one row per public-repository accession to import. fetchngs downloads the reads for each accession; the remaining columns set the identity and metadata of the Flow sample created from it once the run completes.",
+            "description": "One row per public-repository accession to import. fetchngs downloads the reads for each accession; the other columns set the identity and metadata of the Flow sample created from it once the run completes. Add extra columns for any additional metadata you want to record.",
             "params": {
                 "input": {
-                    "name": "Import sheet",
-                    "type": "data",
-                    "category": 2,
+                    "name": "Accessions",
+                    "type": "csv",
                     "required": true,
-                    "description": "CSV with a header row and one row per accession. Columns: accession (a run SRR/ERR/DRR or experiment SRX/ERX/DRX accession), name (the sample name; defaults to the accession if blank), sample_type, organism, strandedness. fetchngs reads only the accession column; the other columns are read by Flow when it creates the samples."
+                    "allow_custom_columns": true,
+                    "columns": [
+                        {
+                            "name": "accession",
+                            "type": "string",
+                            "required": true,
+                            "render": true
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "required": false,
+                            "render": true
+                        },
+                        {
+                            "name": "sample_type",
+                            "type": "string",
+                            "required": true,
+                            "render": true
+                        },
+                        {
+                            "name": "organism",
+                            "type": "string",
+                            "required": true,
+                            "render": true
+                        }
+                    ]
                 },
                 "outdir": {
                     "type": "hidden",
                     "default": "results"
                 }
             }
+        }
+    ],
+    "outputs": [
+        {
+            "name": "Samplesheet",
+            "description": "The samplesheet mapping each accession's runs to their downloaded FASTQ files.",
+            "filetype": "csv",
+            "process": "SRA_TO_SAMPLESHEET"
+        },
+        {
+            "name": "FASTQ files",
+            "description": "The FASTQ files downloaded for each accession.",
+            "filetype": "fastq.gz",
+            "process": "SRA_FASTQ_FTP"
         }
     ]
 }
