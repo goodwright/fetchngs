@@ -49,12 +49,6 @@
             "description": "The samplesheet mapping each accession's runs to their downloaded FASTQ files.",
             "filetype": "csv",
             "process": "SRA_TO_SAMPLESHEET"
-        },
-        {
-            "name": "FASTQ files",
-            "description": "The FASTQ files downloaded for each accession.",
-            "filetype": "fastq.gz",
-            "process": "SRA_FASTQ_FTP"
         }
     ]
 }
