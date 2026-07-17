@@ -2,7 +2,7 @@
     "inputs": [
         {
             "name": "Accessions & metadata",
-            "description": "One row per public-repository accession to import. fetchngs downloads the reads for each accession; the other columns set the identity and metadata of the Flow sample created from it once the run completes. Add extra columns for any additional metadata you want to record.",
+            "description": "One row per public-repository accession to import. fetchngs downloads the reads for each accession.",
             "params": {
                 "input": {
                     "name": "Accessions",
@@ -12,24 +12,6 @@
                     "columns": [
                         {
                             "name": "accession",
-                            "type": "string",
-                            "required": true,
-                            "render": true
-                        },
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "required": false,
-                            "render": true
-                        },
-                        {
-                            "name": "sample_type",
-                            "type": "string",
-                            "required": true,
-                            "render": true
-                        },
-                        {
-                            "name": "organism",
                             "type": "string",
                             "required": true,
                             "render": true
