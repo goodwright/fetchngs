@@ -1,0 +1,55 @@
+{
+    "-profile test --ext.offline": {
+        "content": [
+            {
+                "MULTIQC_MAPPINGS_CONFIG": {
+                    "python": "3.9.5"
+                },
+                "SRA_FASTQ_FTP": {
+                    "wget": "1.21.4"
+                },
+                "SRA_IDS_TO_RUNINFO": {
+                    "python": "3.9.5"
+                },
+                "SRA_RUNINFO_TO_FTP": {
+                    "python": "3.9.5"
+                }
+            },
+            [
+                "fastq",
+                "fastq/ERX10144910_ERR10677146_1.fastq.gz",
+                "fastq/ERX10144910_ERR10677146_2.fastq.gz",
+                "fastq/ERX1234252_ERR1160845.fastq.gz",
+                "fastq/md5",
+                "fastq/md5/ERX10144910_ERR10677146_1.fastq.gz.md5",
+                "fastq/md5/ERX10144910_ERR10677146_2.fastq.gz.md5",
+                "fastq/md5/ERX1234252_ERR1160845.fastq.gz.md5",
+                "metadata",
+                "metadata/ERR10677146.runinfo_ftp.tsv",
+                "metadata/ERR1160845.runinfo_ftp.tsv",
+                "pipeline_info",
+                "pipeline_info/nf_core_fetchngs_software_versions.yml",
+                "samplesheet",
+                "samplesheet/id_mappings.csv",
+                "samplesheet/multiqc_config.yml",
+                "samplesheet/samplesheet.csv"
+            ],
+            [
+                "ERX10144910_ERR10677146_1.fastq.gz:md5,ab1f953a60ce0bdc336e5653e27bdd90",
+                "ERX10144910_ERR10677146_2.fastq.gz:md5,ab1f953a60ce0bdc336e5653e27bdd90",
+                "ERX1234252_ERR1160845.fastq.gz:md5,ab1f953a60ce0bdc336e5653e27bdd90",
+                "ERX10144910_ERR10677146_1.fastq.gz.md5:md5,5bff0624e9f12fceaca657ef787bfdb5",
+                "ERX10144910_ERR10677146_2.fastq.gz.md5:md5,5b29c334d293d91306fa852f6d6cd719",
+                "ERX1234252_ERR1160845.fastq.gz.md5:md5,939bd1d72ed1dc24903e8f01010ef709",
+                "id_mappings.csv:md5,1721ea7256be67b5808434dad0285a3f",
+                "multiqc_config.yml:md5,9d6cd40e5729fb5c9632dd8b25d460b0"
+            ],
+            "samplesheet.csv:md5,2613ca86e10d7448548502b164765261"
+        ],
+        "timestamp": "2026-08-19T14:33:28.942194",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.6"
+        }
+    }
+}

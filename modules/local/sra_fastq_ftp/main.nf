@@ -19,7 +19,31 @@ process SRA_FASTQ_FTP {
 
     script:
     def args = task.ext.args ?: ''
-    if (meta.single_end) {
+    def offline = task.ext.offline ?: false
+    if (offline) {
+        // gzip -n keeps the bytes deterministic so the fastq_md5 pinned in assets/offline still verifies
+        def generate_read = "printf '@offline\\nACGT\\n+\\nIIII\\n' | gzip -n"
+        if (meta.single_end) {
+            """
+            $generate_read > ${meta.id}.fastq.gz
+
+            echo "${meta.md5_1}  ${meta.id}.fastq.gz" > ${meta.id}.fastq.gz.md5
+            md5sum -c ${meta.id}.fastq.gz.md5
+            """
+        } else {
+            """
+            $generate_read > ${meta.id}_1.fastq.gz
+
+            echo "${meta.md5_1}  ${meta.id}_1.fastq.gz" > ${meta.id}_1.fastq.gz.md5
+            md5sum -c ${meta.id}_1.fastq.gz.md5
+
+            $generate_read > ${meta.id}_2.fastq.gz
+
+            echo "${meta.md5_2}  ${meta.id}_2.fastq.gz" > ${meta.id}_2.fastq.gz.md5
+            md5sum -c ${meta.id}_2.fastq.gz.md5
+            """
+        }
+    } else if (meta.single_end) {
         """
         wget \\
             $args \\

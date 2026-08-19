@@ -1,0 +1,57 @@
+nextflow_pipeline {
+
+    name "Test pipeline with ext.offline"
+    script "../main.nf"
+    tag "pipeline"
+    config "./sra_offline.config"
+
+    test("-profile test --ext.offline") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                input = "$projectDir/tests/offline_ids.csv"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            def csv_file = path(params.outdir + '/samplesheet/samplesheet.csv').csv()
+            def ebi_calls = []
+            new File(workDir).eachFileRecurse { f ->
+                if (f.name == '.command.sh' && (f.text.contains('sra_ids_to_runinfo.py') || f.text.contains('wget \\'))) {
+                    ebi_calls << f.parentFile.parentFile.name + '/' + f.parentFile.name
+                }
+            }
+
+            assert workflow.success
+            assertAll(
+                { assert csv_file.rowCount == 2 },
+                { assert stable_name.count { it.toString().endsWith('.fastq.gz') } == 3 },
+                { assert ebi_calls == [] },
+                { assert snapshot(
+                    removeFromYamlMap("${params.outdir}/pipeline_info/nf_core_fetchngs_software_versions.yml", "Workflow"),
+                    stable_name,
+                    stable_path,
+                    "samplesheet.csv:md5," + csv_file.sort().table.collect { row -> [row.getString("sample"), row.getString("fastq_1").replaceAll(params.outdir, ""), row.getString("fastq_2").replaceAll(params.outdir, "")].join(",") }.join("\n").md5()
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test --ext.offline, accession with no fixture") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                input = "$projectDir/tests/offline_ids_no_fixture.csv"
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.join('\n').contains("No offline runinfo fixture for accession 'ERR1160846'")
+        }
+    }
+}
