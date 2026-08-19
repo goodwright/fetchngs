@@ -18,13 +18,27 @@ process SRA_IDS_TO_RUNINFO {
 
     script:
     def metadata_fields = fields ? "--ena_metadata_fields ${fields}" : ''
-    """
-    echo $id > id.txt
-    sra_ids_to_runinfo.py \\
-        id.txt \\
-        ${id}.runinfo.tsv \\
-        $metadata_fields
-    """
+    def offline = task.ext.offline ?: false
+    if (offline) {
+        def fixture = file("${projectDir}/assets/offline/${id}.runinfo.tsv")
+        if (!fixture.exists()) {
+            error("No offline runinfo fixture for accession '${id}' (looked for ${fixture})")
+        }
+        // Inlined rather than staged so the fixture reaches the task without projectDir being mounted
+        """
+        cat <<'END_RUNINFO' > ${id}.runinfo.tsv
+${fixture.text.trim()}
+END_RUNINFO
+        """
+    } else {
+        """
+        echo $id > id.txt
+        sra_ids_to_runinfo.py \\
+            id.txt \\
+            ${id}.runinfo.tsv \\
+            $metadata_fields
+        """
+    }
 
     stub:
     """
